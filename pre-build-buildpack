@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+set -eo pipefail; [[ $DOKKU_TRACE ]] && set -x
+
+APP="conduct-api"; IMAGE="dokku/$APP"
+
+echo "-----> Injecting vapor dependencies ..."
+
+DIR=/app
+
+COMMAND=$(cat <<EOF
+eval "$(cat /etc/lsb-release)"
+export DEBIAN_FRONTEND=noninteractive
+apt-get update
+apt-get install -y wget software-properties-common python-software-properties apt-transport-https
+wget https://repo.vapor.codes/apt/keyring.gpg -O- | apt-key add -
+echo "deb https://repo.vapor.codes/apt $DISTRIB_CODENAME main" | tee /etc/apt/sources.list.d/vapor.list
+apt-get -q update
+apt-get -q install -y cmysql libcurl4-openssl-dev
+unset DEBIAN_FRONTEND
+sleep 1
+EOF
+)
+
+id=$(docker run -d $IMAGE /bin/bash -e -c "$COMMAND")
+docker attach $id
+test $(docker wait $id) -eq 0
+docker commit $id $IMAGE > /dev/null
