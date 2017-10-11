@@ -9,7 +9,7 @@ echo "-----> Injecting vapor dependencies ..."
 DIR=/app
 
 COMMAND=$(cat <<EOF
-eval "$(cat /etc/lsb-release)"
+eval "\$(cat /etc/lsb-release)"
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -y wget software-properties-common python-software-properties apt-transport-https
@@ -23,6 +23,7 @@ EOF
 )
 
 id=$(docker run -d $IMAGE /bin/bash -e -c "$COMMAND")
+#enable logs
 docker attach $id
 test $(docker wait $id) -eq 0
 docker commit $id $IMAGE > /dev/null
