@@ -14,9 +14,9 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -y wget software-properties-common python-software-properties apt-transport-https
 wget https://repo.vapor.codes/apt/keyring.gpg -O- | apt-key add -
-echo "deb https://repo.vapor.codes/apt $DISTRIB_CODENAME main" | tee /etc/apt/sources.list.d/vapor.list
-apt-get -q update
-apt-get -q install -y cmysql libcurl4-openssl-dev
+echo "deb https://repo.vapor.codes/apt xenial main" | tee /etc/apt/sources.list.d/vapor.list
+apt-get update
+apt-get install -y cmysql libcurl4-openssl-dev
 unset DEBIAN_FRONTEND
 sleep 1
 EOF
